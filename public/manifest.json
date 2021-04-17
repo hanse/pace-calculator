@@ -1,0 +1,23 @@
+{
+  "short_name": "Snittfart",
+  "name": "Snittfart Running Calculator",
+  "icons": [
+    {
+      "src": "/app-icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/app-icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/?source=pwa",
+  "background_color": "#911d0a",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#3367D6",
+  "description": "Figure out how fast you must run to beat your friends or other top athletes.",
+  "screenshots": []
+}
