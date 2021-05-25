@@ -161,6 +161,19 @@ mark {
   font-weight: 500;
 }
 
+.table-container {
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.timing-data-table {
+  table-layout: fixed;
+}
+
+th {
+  white-space: nowrap;
+}
+
 .timing-data-table tbody tr:nth-child(odd) {
   background: #f3f3f3;
 }

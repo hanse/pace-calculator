@@ -19,3 +19,12 @@ export interface EventPerformanceDto {
   humanTime: string;
   gender: string;
 }
+
+export interface RecordsDto {
+  id: string;
+  time: string;
+  athleteName: string;
+  halfSplit: string;
+  distance: string;
+  description: string;
+}

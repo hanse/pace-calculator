@@ -3,13 +3,9 @@ import * as React from 'react';
 import { getPace, toHHMMSS, withCommas } from './formatting';
 
 import { PerformanceApiResponse } from './types';
-import { createFetch } from '@devmoods/fetch';
 import { cx } from '@devmoods/ui';
+import { fetch } from './api';
 import { useAbortablePromise } from 'use-abortable-promise';
-
-const fetch = createFetch({
-  getRootUrl: () => '/api',
-});
 
 const PREDEFINED_LAPS = [
   10000, 5000, 3000, 1500, 1000, 800, 400, 200, 100,
@@ -78,32 +74,34 @@ function PaceCalculatorTimingData({
           ['Pace', getPace(meters, seconds)],
         ]}
       />
-      <table className="timing-data-table">
-        <thead>
-          <tr>
-            <th>Lap</th>
-            <th>Same pace</th>
-            <th title="Using the Riegel formula">Equivalent ℹ️</th>
-          </tr>
-        </thead>
-        <tbody>
-          {(data?.lapTimes || PREDEFINED_LAPS).map((lap) => {
-            return (
-              <tr key={lap.id} data-distance={lap.distance}>
-                <td>{lap.humanDistance}</td>
-                <td>
-                  <span title={`${lap.time.toFixed(2)} seconds`} data-approx>
-                    {lap.humanTime}
-                  </span>
-                </td>
-                <td>
-                  <span data-approx>{lap.riegel}</span>
-                </td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
+      <div className="table-container">
+        <table className="timing-data-table">
+          <thead>
+            <tr>
+              <th>Lap</th>
+              <th>Same pace</th>
+              <th title="Using the Riegel formula">Equivalent ℹ️</th>
+            </tr>
+          </thead>
+          <tbody>
+            {(data?.lapTimes || PREDEFINED_LAPS).map((lap) => {
+              return (
+                <tr key={lap.id} data-distance={lap.distance}>
+                  <td>{lap.humanDistance}</td>
+                  <td>
+                    <span title={`${lap.time.toFixed(2)} seconds`} data-approx>
+                      {lap.humanTime}
+                    </span>
+                  </td>
+                  <td>
+                    <span data-approx>{lap.riegel}</span>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

@@ -46,6 +46,26 @@ app.use(bodyParser.json());
 app.use(withRequestContext());
 
 app.get(
+  '/api/records',
+  route(async () => {
+    const rows = await postgres.all<any>(sql`
+      SELECT id, athlete_name, competition_date, world_records.distance, time_seconds, half_split, description
+      FROM world_records
+    `);
+
+    return rows.map((row) => ({
+      id: `${row.id}`,
+      athleteName: row.athlete_name,
+      competitionDate: row.competition_date,
+      distance: row.distance,
+      time: toHHMMSS(+row.time_seconds, 'normal', 2),
+      halfSplit: row.half_split == null ? null : toHHMMSS(+row.half_split),
+      description: row.description,
+    }));
+  })
+);
+
+app.get(
   '/api/performance',
   validateQuery({
     properties: {
