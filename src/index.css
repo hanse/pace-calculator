@@ -86,7 +86,7 @@ table {
 th,
 td {
   padding: var(--spacing-s) var(--spacing-m);
-  width: 50%;
+  width: 33%;
 }
 
 dl.summary {
@@ -159,4 +159,26 @@ mark {
   padding: 0 4px;
   font-size: 0.9em;
   font-weight: 500;
+}
+
+.timing-data-table tbody tr:nth-child(odd) {
+  background: #f3f3f3;
+}
+
+tr[data-distance='1000'],
+tr[data-distance='400'] {
+  font-weight: 700;
+}
+
+form input {
+  font-size: 26px !important;
+}
+
+.negative-split {
+  opacity: 0;
+  transition: opacity 0.14s;
+}
+
+.negative-split--visible {
+  opacity: 1;
 }

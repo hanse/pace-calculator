@@ -1,17 +1,10 @@
-import {
-  Input,
-  Select,
-  SelectOption,
-  Stack,
-  useResponsiveValue,
-  useThrottle,
-} from '@devmoods/ui';
 import * as React from 'react';
 
-import Card from './Card';
+import { Input, Select, SelectOption, Stack, useThrottle } from '@devmoods/ui';
+import { parseMeters, parseSeconds } from './parsers';
+
 import PRESETS from './data.json';
 import PaceCalculatorTimingData from './PaceCalculatorTimingData';
-import { parseMeters, parseSeconds } from './parsers';
 import SplitCalculator from './SplitCalculator';
 
 interface State {
@@ -130,11 +123,11 @@ function PaceCalculator() {
     });
   };
 
-  const handleInput = (
-    type: 'SPLIT_CHANGED' | 'DISTANCE_CHANGED' | 'TIME_CHANGED'
-  ) => ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
-    dispatch({ type, value });
-  };
+  const handleInput =
+    (type: 'SPLIT_CHANGED' | 'DISTANCE_CHANGED' | 'TIME_CHANGED') =>
+    ({ currentTarget: { value } }: React.FormEvent<HTMLInputElement>) => {
+      dispatch({ type, value });
+    };
 
   const handleSplitChange = (e: any) => {
     dispatch({
@@ -147,10 +140,19 @@ function PaceCalculator() {
   const seconds = parseSeconds(time);
   const splitValueSeconds = parseSeconds(splitValue);
 
+  const isMissingInputs = !meters || !seconds;
+
+  const throttledMeters = useThrottle(meters, 200);
+  const throttledSeconds = useThrottle(seconds, 200);
+
   return (
     <Stack spacing="xl">
       <section>
-        <Stack spacing="m" className="card dmk-margin-top-s dmk-padding-m">
+        <Stack
+          as="form"
+          spacing="m"
+          className="card dmk-margin-top-s dmk-padding-m"
+        >
           <Input
             label={'Enter distance 👟'}
             id="distance"
@@ -180,34 +182,41 @@ function PaceCalculator() {
         </Stack>
       </section>
 
-      <section className={!meters || !seconds ? 'blurred' : ''}>
+      <section className={isMissingInputs ? 'blurred' : ''}>
         <h2>Splits</h2>
-        <Card className="card dmk-margin-top-s dmk-padding-m">
+        <div className="card dmk-margin-top-s dmk-padding-m">
           <SplitCalculator
             meters={meters}
             seconds={seconds}
             value={splitValueSeconds}
             onChange={handleSplitChange}
           />
-        </Card>
+        </div>
       </section>
 
-      <section className={!meters || !seconds ? 'blurred' : ''}>
+      <section className={isMissingInputs ? 'blurred' : ''}>
         <h2>Timing data</h2>
-        <Card className="card dmk-margin-top-s">
-          <PaceCalculatorTimingData meters={meters} seconds={seconds} />
-        </Card>
+        <div className="card dmk-margin-top-s">
+          <PaceCalculatorTimingData
+            meters={throttledMeters}
+            seconds={throttledSeconds}
+          />
+        </div>
       </section>
 
       <section className="about">
         <p>
           The <strong>Snittfart</strong> pace calculator shows how fast you need
-          to run on average to finish your runs at a given time.
+          to run on average to finish your early enough to reach your goals!
         </p>
+
         <p>
-          <mark>Timing data</mark> shows average lap-times needed for a range of
-          lap lengths &ndash; not estimated equivalent race performances. Nice
-          for planning your efforts!
+          <strong>Snittfart</strong> also calculates the{' '}
+          <a href="https://www.worldathletics.org/news/iaaf-news/scoring-tables-2017">
+            World Athletics Ranking score
+          </a>{' '}
+          for the effort using the scoring tables and list equivalent
+          performances using Riegels formula.
         </p>
 
         <p>

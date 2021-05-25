@@ -1,0 +1,21 @@
+export interface PerformanceApiResponse {
+  performances: {
+    performance: EventPerformanceDto;
+  }[];
+  lapTimes: {
+    id: number;
+    distance: number;
+    humanDistance: string;
+    time: number;
+    humanTime: string;
+    riegel: string;
+  }[];
+}
+
+export interface EventPerformanceDto {
+  eventCategory: string;
+  eventSlug: string;
+  points: number;
+  humanTime: string;
+  gender: string;
+}

@@ -1,6 +1,6 @@
-import { Slider, Spacer, Stack } from '@devmoods/ui';
 import * as React from 'react';
 
+import { Badge, Slider, Spacer, Stack, cx } from '@devmoods/ui';
 import { getPace, toHHMMSS, withCommas } from './formatting';
 
 interface SplitCalculatorProps {
@@ -8,10 +8,6 @@ interface SplitCalculatorProps {
   seconds: number;
   onChange: React.ChangeEventHandler<HTMLInputElement>;
   value: number;
-}
-
-function getColor(value: number) {
-  return value <= 0 ? 'var(--colors-success)' : 'var(--colors-danger)';
 }
 
 function SplitCalculator({
@@ -25,18 +21,7 @@ function SplitCalculator({
   const diff = lastSeconds - firstSeconds;
 
   return (
-    <div style={{ position: 'relative' }}>
-      <div
-        style={{
-          position: 'absolute',
-          right: -8,
-          top: -8,
-          width: 24,
-          height: 24,
-          borderRadius: 12,
-          backgroundColor: getColor(diff / seconds),
-        }}
-      />
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <Stack horizontal>
         <Stack spacing="xs">
           <span>
@@ -54,7 +39,18 @@ function SplitCalculator({
           <small>{getPace(meters / 2, lastSeconds)}</small>
         </Stack>
       </Stack>
-      <Spacer height="m" />
+      <Badge
+        intent="success"
+        aria-hidden
+        className={cx(
+          'negative-split',
+          diff < 0 && 'negative-split--visible',
+          'dmk-margin-top-s'
+        )}
+        style={{ alignSelf: 'flex-end' }}
+      >
+        Negative split
+      </Badge>
       <Slider value={value} min={0} max={seconds} onChange={onChange} />
     </div>
   );

@@ -2,10 +2,28 @@ import * as React from 'react';
 
 import { getPace, toHHMMSS, withCommas } from './formatting';
 
-const PREDEFINED_LAPS = [10000, 5000, 3000, 1500, 1000, 800, 400, 200, 100];
+import { PerformanceApiResponse } from './types';
+import { createFetch } from '@devmoods/fetch';
+import { cx } from '@devmoods/ui';
+import { useAbortablePromise } from 'use-abortable-promise';
+
+const fetch = createFetch({
+  getRootUrl: () => '/api',
+});
+
+const PREDEFINED_LAPS = [
+  10000, 5000, 3000, 1500, 1000, 800, 400, 200, 100,
+].map((distance, index) => ({
+  id: index,
+  distance,
+  humanDistance: '',
+  time: 0,
+  humanTime: '',
+  riegel: '',
+}));
 
 interface SummaryProps {
-  data: [string, string][];
+  data: [string, React.ReactNode][];
 }
 
 const Summary = ({ data }: SummaryProps) => (
@@ -28,49 +46,58 @@ function PaceCalculatorTimingData({
   meters,
   seconds,
 }: PaceCalculatorTimingDataProps) {
+  const [{ data, error, loading }] = useAbortablePromise(
+    async (signal) => {
+      const result = await fetch<PerformanceApiResponse>(
+        `/performance?distance=${meters}&time=${seconds}`,
+        { signal }
+      );
+
+      return result.jsonData;
+    },
+    [meters, seconds]
+  );
+
+  if (error) {
+    throw error;
+  }
+
+  const waPoints = (
+    data?.performances.map(
+      (performance) => `${performance.performance.points}p`
+    ) || ['-', '-']
+  ).join(' / ');
+
   return (
-    <div>
+    <div className={cx(loading && 'dmk-animate-pulse')}>
       <Summary
         data={[
           ['Distance', `${withCommas(meters)} m`],
           ['Time', toHHMMSS(seconds, 'normal', 2)],
+          ['WA Ranking (m/f)', <span>{waPoints}</span>],
           ['Pace', getPace(meters, seconds)],
         ]}
       />
-      <table>
+      <table className="timing-data-table">
         <thead>
           <tr>
             <th>Lap</th>
-            <th>Time</th>
+            <th>Same pace</th>
+            <th title="Using the Riegel formula">Equivalent ℹ️</th>
           </tr>
         </thead>
         <tbody>
-          {PREDEFINED_LAPS.map((distance, index) => {
-            const scaledSeconds = (seconds * distance) / (meters || 1);
-
-            const highlight = (value: number) =>
-              distance === value ? { fontWeight: 700 } : undefined;
-
+          {(data?.lapTimes || PREDEFINED_LAPS).map((lap) => {
             return (
-              <tr
-                key={index}
-                style={{
-                  ...(index % 2 === 0 && {
-                    backgroundColor: '#f3f3f3',
-                  }),
-                }}
-              >
+              <tr key={lap.id} data-distance={lap.distance}>
+                <td>{lap.humanDistance}</td>
                 <td>
-                  <span style={highlight(1000)}>{withCommas(distance)} m</span>
+                  <span title={`${lap.time.toFixed(2)} seconds`} data-approx>
+                    {lap.humanTime}
+                  </span>
                 </td>
                 <td>
-                  <span
-                    style={highlight(1000)}
-                    title={`${scaledSeconds.toFixed(2)} seconds`}
-                  >
-                    <span style={{ color: '#ccc' }}>~ </span>
-                    {toHHMMSS(scaledSeconds)}
-                  </span>
+                  <span data-approx>{lap.riegel}</span>
                 </td>
               </tr>
             );
