@@ -9,7 +9,7 @@ import {
 import * as React from 'react';
 import { useAbortablePromise } from 'use-abortable-promise';
 
-import { fetch } from './api';
+import { fetch } from './api.client';
 import PaceCalculatorTimingData from './PaceCalculatorTimingData';
 import { parseMeters, parseSeconds } from './parsers';
 import SplitCalculator from './SplitCalculator';

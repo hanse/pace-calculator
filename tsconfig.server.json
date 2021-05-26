@@ -1,7 +1,10 @@
 {
   "extends": "./tsconfig",
+  "exclude": ["node_modules", "dist", "data", "src/**/*.client.ts"],
   "compilerOptions": {
     "moduleResolution": "node",
-    "module": "CommonJS"
+    "module": "CommonJS",
+    "outDir": "lib",
+    "noEmit": false
   }
 }

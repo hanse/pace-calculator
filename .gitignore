@@ -10,6 +10,7 @@ coverage
 build
 .cache
 dist
+lib
 
 # misc
 .DS_Store
