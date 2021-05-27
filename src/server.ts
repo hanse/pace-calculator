@@ -144,7 +144,7 @@ async function getMostLikelyEvent(
     FROM events
     LEFT JOIN event_categories ON events.event_category_id = event_categories.id
     LEFT JOIN scoring ON scoring.event_id = events.id AND scoring.gender = ${gender}
-    ORDER BY index, event_categories.id
+    ORDER BY index, event_categories.id, points
     LIMIT 1;
   `);
 
