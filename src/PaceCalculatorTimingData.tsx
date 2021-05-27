@@ -58,8 +58,10 @@ function PaceCalculatorTimingData({
   }
 
   const waPoints = (
-    data?.performances.map(
-      (performance) => `${performance.performance.points}p`
+    data?.performances.map((performance) =>
+      performance.performance.points == null
+        ? '-'
+        : `${performance.performance.points}p`
     ) || ['-', '-']
   ).join(' / ');
 

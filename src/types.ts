@@ -15,7 +15,7 @@ export interface PerformanceApiResponse {
 export interface EventPerformanceDto {
   eventCategory: string;
   eventSlug: string;
-  points: number;
+  points: number | null;
   humanTime: string;
   gender: string;
 }

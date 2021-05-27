@@ -80,10 +80,10 @@ app.get(
 
     const get = async (gender: string) => {
       const event = await getMostLikelyEvent(distance, time, gender);
-      const similarPerformances = await getSimilarPerformances(
-        +event.points,
-        gender
-      );
+      const similarPerformances =
+        event.points == null
+          ? []
+          : await getSimilarPerformances(+event.points, gender);
 
       return {
         performance: mapToDto(event),
@@ -113,7 +113,7 @@ app.get(
 interface EventPerformanceRow {
   event_category: string;
   event_slug: string;
-  points: string;
+  points: string | null;
   time: string;
   gender: string;
 }
@@ -123,7 +123,7 @@ function mapToDto(row: EventPerformanceRow): EventPerformanceDto {
     eventSlug: row.event_slug,
     eventCategory: row.event_category,
     humanTime: toHHMMSS(+row.time, 'normal', 2),
-    points: +row.points,
+    points: row.points == null ? null : +row.points,
     gender: row.gender?.toUpperCase(),
   };
 }
@@ -133,19 +133,27 @@ async function getMostLikelyEvent(
   time: number,
   gender = 'male'
 ) {
-  const event = await postgres.first<EventPerformanceRow>(sql` 
+  const event = await postgres.first<EventPerformanceRow>(sql`
     SELECT
-      events.slug AS event_slug,
-      event_categories.name AS event_category,
-      ABS(events.distance - ${distance}) AS index,
-      FLOOR(scoring.a * POW(${time} + scoring.b, 2)) AS points,
-      ${time}::numeric AS time,
-      scoring.gender AS gender
-    FROM events
-    LEFT JOIN event_categories ON events.event_category_id = event_categories.id
-    LEFT JOIN scoring ON scoring.event_id = events.id AND scoring.gender = ${gender}
-    ORDER BY index, event_categories.id, points
-    LIMIT 1;
+      CASE WHEN points > 1400 THEN NULL ELSE points END AS points,
+      event_slug,
+      event_category,
+      time,
+      gender
+    FROM (
+      SELECT
+        events.slug AS event_slug,
+        event_categories.name AS event_category,
+        ABS(events.distance - ${distance}) AS index,
+        FLOOR(scoring.a * POW(${time} + scoring.b, 2)) AS points,
+        ${time}::numeric AS time,
+        scoring.gender AS gender
+      FROM events
+      LEFT JOIN event_categories ON events.event_category_id = event_categories.id
+      LEFT JOIN scoring ON scoring.event_id = events.id AND scoring.gender = ${gender}
+      ORDER BY index, event_categories.id, points
+      LIMIT 1
+    ) as t
   `);
 
   if (event == null) {
