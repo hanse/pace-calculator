@@ -1,6 +1,5 @@
-import { cx } from '@devmoods/ui';
+import { cx, useQuery } from '@devmoods/ui';
 import * as React from 'react';
-import { useAbortablePromise } from 'use-abortable-promise';
 
 import { fetch } from './api.client';
 import { getPace, toHHMMSS, withCommas } from './formatting';
@@ -41,7 +40,7 @@ function PaceCalculatorTimingData({
   meters,
   seconds,
 }: PaceCalculatorTimingDataProps) {
-  const [{ data, error, loading }] = useAbortablePromise(
+  const { data, error, loading } = useQuery(
     async (signal) => {
       const result = await fetch<PerformanceApiResponse>(
         `/performance?distance=${meters}&time=${seconds}`,

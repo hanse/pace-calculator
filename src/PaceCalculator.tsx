@@ -4,10 +4,10 @@ import {
   Select,
   SelectOption,
   Stack,
+  useQuery,
   useThrottle,
 } from '@devmoods/ui';
 import * as React from 'react';
-import { useAbortablePromise } from 'use-abortable-promise';
 
 import { fetch } from './api.client';
 import PaceCalculatorTimingData from './PaceCalculatorTimingData';
@@ -60,7 +60,7 @@ function useLocationState(query: string) {
 }
 
 function useCalculatorState() {
-  const [{ data }] = useAbortablePromise(async (signal) => {
+  const { data } = useQuery(async (signal) => {
     try {
       const result = await fetch<RecordsDto[]>('/records', { signal });
       return result.jsonData;
