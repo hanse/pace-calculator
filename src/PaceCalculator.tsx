@@ -1,4 +1,5 @@
 import {
+  Badge,
   ErrorBoundary,
   Input,
   Select,
@@ -256,8 +257,10 @@ function PaceCalculator() {
 
       <section className="about">
         <p>
-          The <strong>Snittfart</strong> pace calculator shows how fast you need
-          to run on average to finish your early enough to reach your goals!
+          The <strong>Snittfart</strong> Pace Calculator calculates how fast you
+          need to run on average to finish your races in time to reach your
+          goals! Enter a time and a distance and we'll show you everything you
+          need about pacing.
         </p>
 
         <p>
@@ -265,19 +268,21 @@ function PaceCalculator() {
           <a href="https://www.worldathletics.org/news/iaaf-news/scoring-tables-2017">
             World Athletics Ranking score
           </a>{' '}
-          for the effort using the scoring tables and list equivalent
-          performances using Riegels formula.
+          for the effort using the <em>official</em> scoring tables and list
+          equivalent performances in other running events using Riegels formula.
         </p>
 
         <p>
-          Use this tool to go figure out how fast you must run to beat Jakob,
-          Eliud or Hicham.{' '}
-          <em>
-            If you are running on a regular track, the time in the 400 m row
-            should match your watch {'⌚️'} after each lap to be sure you make
-            it in time.
-          </em>
+          Use this tool to figure out how fast you must run to reach your goals,
+          beat your friends or to match top athletes like Jakob Ingebrigtsen,
+          Eliud Kipchoge and Hicham El Guerrouj.
         </p>
+
+        <div className="dmk-margin-top-l dmk-text-600">
+          <Badge>TIPS</Badge> If you are running on a regular track, the time in
+          the <strong>400 m</strong> row should match your watch {'⌚️'} after
+          each lap to be sure you make it in time.
+        </div>
       </section>
     </Stack>
   );
